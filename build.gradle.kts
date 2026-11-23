@@ -10,9 +10,9 @@ plugins {
 }
 
 // 发布坐标集中在此处维护，模块内不再各自声明
-val libraryGroup: String = providers.gradleProperty("libwrap.group").getOrElse("io.github.libwrap")
+val libraryGroup: String = providers.gradleProperty("libwrap.group").getOrElse("io.github.git-a-live")
 val libraryVersion: String = providers.gradleProperty("libwrap.version").getOrElse("0.1.0")
-val projectHomepage = "https://github.com/libwrap/android-libwrap"
+val projectHomepage = "https://github.com/Git-a-Live/OpenLibsExtensions"
 
 /**
  * 为单个模块注册 maven publication。
@@ -40,8 +40,8 @@ fun Project.registerReleasePublication(componentName: String, homepage: String) 
                     from(components[componentName])
                     artifactId = project.name
                     pom {
-                        name.set("${project.name} · android-libwrap")
-                        description.set("android-libwrap 的 ${project.name} 模块，仓库地址 $homepage")
+                        name.set("${project.name} · OpenLibsExtensions")
+                        description.set("OpenLibsExtensions 的 ${project.name} 模块，仓库地址 $homepage")
                         this.url.set(homepage)
                         licenses {
                             license {
@@ -51,8 +51,8 @@ fun Project.registerReleasePublication(componentName: String, homepage: String) 
                         }
                         developers {
                             developer {
-                                id.set("libwrap")
-                                name.set("libwrap")
+                                id.set("Git-a-Live")
+                                name.set("Git-a-Live")
                             }
                         }
                         scm {

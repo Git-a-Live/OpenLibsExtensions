@@ -1,4 +1,4 @@
-# android-libwrap
+# OpenLibsExtensions
 
 对四个常用三方库的轻量封装：**Coil 渐变模糊**、**Gson 脏数据容错**、**Lottie 列表共享缓存**、**ZXing 二维码**。
 
@@ -61,7 +61,7 @@
 如果宿主必须停留在更低版本，可以自行排除并显式提供：
 
 ```kotlin
-implementation("com.github.<你的GitHub用户名>.android-libwrap:coil:v0.1.0") {
+implementation("com.github.Git-a-Live.OpenLibsExtensions:coil:v0.1.0") {
     exclude(group = "io.coil-kt.coil3", module = "coil")
 }
 implementation("io.coil-kt.coil3:coil:3.2.0")
@@ -96,7 +96,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io") {
             // 限定 group，避免 JitPack 参与其他依赖的解析、拖慢同步
-            content { includeGroup("com.github.<你的GitHub用户名>") }
+            content { includeGroup("com.github.Git-a-Live") }
         }
     }
 }
@@ -109,14 +109,14 @@ dependencyResolutionManagement {
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.github.<你的GitHub用户名>.android-libwrap:coil:v0.1.0")    // 渐变模糊，依赖 Coil
-    implementation("com.github.<你的GitHub用户名>.android-libwrap:lottie:v0.1.0")  // 共享缓存，依赖 Lottie
-    implementation("com.github.<你的GitHub用户名>.android-libwrap:zxing:v0.1.0")   // 二维码，依赖 zxing-core
-    implementation("com.github.<你的GitHub用户名>.android-libwrap:gson:v0.1.0")    // 脏 JSON 修复，依赖 Gson
+    implementation("com.github.Git-a-Live.OpenLibsExtensions:coil:v0.1.0")    // 渐变模糊，依赖 Coil
+    implementation("com.github.Git-a-Live.OpenLibsExtensions:lottie:v0.1.0")  // 共享缓存，依赖 Lottie
+    implementation("com.github.Git-a-Live.OpenLibsExtensions:zxing:v0.1.0")   // 二维码，依赖 zxing-core
+    implementation("com.github.Git-a-Live.OpenLibsExtensions:gson:v0.1.0")    // 脏 JSON 修复，依赖 Gson
 }
 ```
 
-坐标规则是 `com.github.用户.仓库:模块名:版本`。版本可以填：
+坐标规则是 `com.github.Git-a-Live.OpenLibsExtensions:模块名:版本`。版本可以填：
 
 | 写法 | 含义 | 适用 |
 |---|---|---|
@@ -129,7 +129,7 @@ dependencies {
 不想等 JitPack 构建、或者要改源码验证时，走本地仓库：
 
 ```bash
-# 在 android-libwrap 仓库根目录
+# 在 OpenLibsExtensions 仓库根目录
 ./gradlew publishToMavenLocal
 ```
 
@@ -144,7 +144,7 @@ repositories {
 
 | 现象 | 原因与处理 |
 |---|---|
-| 依赖解析 404 或一直转圈 | 该 tag 首次被请求时 JitPack 才开始构建，通常 1~3 分钟。日志见 `https://jitpack.io/com/github/用户/仓库/版本/build.log` |
+| 依赖解析 404 或一直转圈 | 该 tag 首次被请求时 JitPack 才开始构建，通常 1~3 分钟。日志见 `https://jitpack.io/com/github/Git-a-Live/OpenLibsExtensions/v0.1.0/build.log` |
 | 明明发了新 tag 却拿到旧内容 | JitPack 会缓存，加 `--refresh-dependencies` 重新解析 |
 | `Dependency requires compileSdk 37` | 宿主 `compileSdk` 低于 37，升上去即可 |
 | 类找不到 `coil3.transform.Transformation` | 宿主已引入其他版本的 Coil，被 Gradle 解析成了低版本；用 `./gradlew :app:dependencies` 确认实际版本 |
@@ -302,7 +302,7 @@ val bitmap = QrCodes.encode(
 ## 项目结构
 
 ```
-android-libwrap/
+OpenLibsExtensions/
 ├── coil/           # 渐变模糊：StackBlur + AGSL + Coil Transformation + ImageView 扩展
 ├── gson/           # 纯 Kotlin：安全取值 + 脏 JSON 修复
 ├── lottie/         # 共享 Composition 缓存

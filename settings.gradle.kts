@@ -32,7 +32,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "android-libwrap"
+rootProject.name = "OpenLibsExtensions"
 
 include(":coil")
 include(":lottie")

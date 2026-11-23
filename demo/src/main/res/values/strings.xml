@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Libwrap Demo</string>
+    <string name="app_name">OpenLibsExtensions Demo</string>
 
-    <string name="main_title">android-libwrap</string>
+    <string name="main_title">OpenLibsExtensions</string>
     <string name="main_subtitle">四个模块的能力演示：Coil 渐变模糊、Gson 脏数据修复、Lottie 共享缓存、ZXing 二维码。</string>
 
     <string name="entry_blur">Coil · 渐变模糊（可切换 CPU / GPU）</string>

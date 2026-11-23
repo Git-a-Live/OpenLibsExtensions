@@ -4,17 +4,17 @@
 
 ## 1. 坐标
 
-group 与 version 集中在根 `build.gradle.kts` 读取，默认值 `io.github.libwrap` / `0.1.0`。
+group 与 version 集中在根 `build.gradle.kts` 读取，默认值 `io.github.git-a-live` / `0.1.0`。
 
 三种改法，优先级从低到高：
 
 ```bash
 # 1) gradle.properties（改一次长期生效）
-libwrap.group=com.github.yourname
+libwrap.group=io.github.git-a-live
 libwrap.version=0.1.0
 
 # 2) 命令行参数（单次生效）
-./gradlew publishToMavenLocal -Plibwrap.group=com.github.yourname -Plibwrap.version=0.1.0
+./gradlew publishToMavenLocal -Plibwrap.group=io.github.git-a-live -Plibwrap.version=0.1.0
 
 # 3) 发布到远端仓库时额外指定地址与凭据
 ./gradlew publish -PpublishRepoUrl=https://... -PpublishRepoUser=xxx -PpublishRepoPassword=xxx
@@ -34,7 +34,7 @@ libwrap.version=0.1.0
 检查产物形态：
 
 ```bash
-ls ~/.m2/repository/io/github/libwrap/coil/0.1.0/
+ls ~/.m2/repository/io/github/git-a-live/coil/0.1.0/
 # coil-0.1.0.aar / coil-0.1.0-sources.jar / coil-0.1.0.pom / coil-0.1.0.module
 
 unzip -p coil/build/outputs/aar/coil-release.aar \
@@ -68,11 +68,11 @@ GitHub Release 是 JitPack 的构建入口，没有 Release 就只有 `main-SNAP
 ./gradlew clean publishToMavenLocal --stacktrace
 ```
 
-然后把 `~/.m2` 里的产物按 `com.github.用户.仓库:模块:版本` 的坐标对外提供。
+然后把 `~/.m2` 里的产物按 `com.github.Git-a-Live.OpenLibsExtensions:模块名:版本` 的坐标对外提供。
 
 几个需要知道的机制：
 
-- **按需构建**：第一次有人请求某个版本时才构建，通常 1~3 分钟。日志：`https://jitpack.io/com/github/用户/仓库/版本/build.log`
+- **按需构建**：第一次有人请求某个版本时才构建，通常 1~3 分钟。日志：`https://jitpack.io/com/github/Git-a-Live/OpenLibsExtensions/版本/build.log`
 - **缓存**：同一版本构建成功后会被缓存，客户端需要 `--refresh-dependencies` 才能拿到重建结果
 - **不可变**：发布后 7 天产物冻结，之后的修复必须发新 tag
 - **多模块**：每个模块单独一个 artifactId，取的是 `artifactId` 而不是目录名（本项目两者一致）
