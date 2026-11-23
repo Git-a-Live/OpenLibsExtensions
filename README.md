@@ -8,6 +8,7 @@
 
 - [特性](#特性)
 - [兼容性](#兼容性)
+- [依赖契约](#依赖契约)
 - [模块](#模块)
 - [接入](#接入)
 - [coil：渐变模糊](#coil渐变模糊)
@@ -39,6 +40,34 @@
 | Kotlin | 2.4.21 |
 | JDK | 17+（CI 使用 21） |
 | 模糊 GPU 路径 | API 33+（`RuntimeShader`），低版本自动走 CPU |
+
+## 依赖契约
+
+产物是薄 AAR/JAR，**不 shade、不做 fat-jar**，第三方库以 Gradle 依赖的形式传递，最终版本由宿主的冲突解决决定。
+
+| 模块 | 编译时依赖 | 声明方式 |
+|---|---|---|
+| `:coil` | `io.coil-kt.coil3:coil:3.6.3`、`androidx.annotation:1.11.0` | `requires`（下限） |
+| `:lottie` | `com.airbnb.android:lottie:6.7.1`、`androidx.annotation:1.11.0` | `requires`（下限） |
+| `:zxing` | `com.google.zxing:core:3.5.4` | `requires`（下限） |
+| `:gson` | `com.google.code.gson:gson:2.15.0` | `requires`（下限） |
+
+三点需要明确：
+
+1. **不是版本锁**。`requires` 只声明下限：宿主用更高版本时 Gradle 取高者，本库不会强行降级；宿主用更低版本时会被抬到上表版本。
+2. **`kotlin-stdlib` 会被抬到 2.4.21**，因此宿主的 Kotlin 编译器需要 ≥ 2.x。这是库用 Kotlin 2.4 编译的必然结果，无法通过依赖声明规避。
+3. **不引入 `androidx.core`**。三个 Android 模块曾把它列为 `implementation`，但它在本库中并未被使用——只在运行时类路径上白白增加一个依赖，现已移除；当前唯一的 androidx 传递依赖是 `annotation`（公开签名里用到了 `@DrawableRes` / `@RawRes` / `@RequiresApi`）。
+
+如果宿主必须停留在更低版本，可以自行排除并显式提供：
+
+```kotlin
+implementation("com.github.<你的GitHub用户名>.android-libwrap:coil:v0.1.0") {
+    exclude(group = "io.coil-kt.coil3", module = "coil")
+}
+implementation("io.coil-kt.coil3:coil:3.2.0")
+```
+
+> 注意：降到低于上表版本时本库不保证二进制兼容——`Transformation`、`LottieDrawable` 等父类与方法签名可能不存在，或语义已变。兼容性只对上表版本及以上成立。
 
 ## 模块
 

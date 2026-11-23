@@ -18,7 +18,7 @@ android {
 }
 
 dependencies {
+    // 只用到 android.graphics 与 zxing，不依赖任何 androidx 组件
     api(libs.zxing.core)
-    implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
 }

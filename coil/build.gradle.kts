@@ -19,6 +19,7 @@ android {
 
 dependencies {
     api(libs.coil)
-    implementation(libs.androidx.core.ktx)
+    // 公开签名里出现 @DrawableRes / @RequiresApi，注解类需对宿主可见
+    api(libs.androidx.annotation)
     testImplementation(libs.junit)
 }
