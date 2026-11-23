@@ -138,7 +138,9 @@ public class GradientBlurEffect(
                 half4 source = content.eval(fragCoord);
                 float height = max(uSize.y, 1.0);
                 float alpha = float(source.a);
-                float3 baseColor = alpha > 0.0 ? float3(unpremul(source).rgb) : float3(0.0);
+                // premultiplied 输入还原为直通色：rgb 已按 alpha 预乘，除以 alpha 即可；
+                // a 为 0 时 rgb 必为 0，用极小值兜底避免除零
+                float3 baseColor = float3(source.rgb) / max(alpha, 0.0001);
 
                 float topWeight = 0.0;
                 if (uTopCoverage > 0.0) {
