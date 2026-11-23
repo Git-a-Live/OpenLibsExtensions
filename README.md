@@ -35,11 +35,14 @@
 |---|---|
 | minSdk | 21 |
 | compileSdk | 37 |
+| 宿主 `jvmTarget` | `:coil` ≥ **11**，`:lottie` / `:zxing` / `:gson` ≥ **1.8** |
 | AGP | 9.5.1（内建 Kotlin，不再应用 `kotlin-android` 插件） |
 | Gradle | 9.6.0 |
 | Kotlin | 2.4.21 |
 | JDK | 17+（CI 使用 21） |
 | 模糊 GPU 路径 | API 33+（`RuntimeShader`），低版本自动走 CPU |
+
+关于 `jvmTarget`：本库的公开 API 里有 `inline` 函数（`toListOrNull<T>()`、`toObjectOrNull<T>()`），Kotlin 禁止把高版本的字节码内联进低版本目标，宿主目标低于上表下限时会直接编译失败。`:coil` 的下限 11 由 Coil 3 锁定——它用 JVM 11 编译且 `ImageView.load` 是 inline 函数，本库无法再往下压。
 
 ## 依赖契约
 
