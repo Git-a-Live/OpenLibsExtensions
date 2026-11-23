@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+local.properties
+*.hprof
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+captures/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Android
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+
+# Android Studio 自动生成，钉死本机 JDK 工具链，不随仓库分发
+gradle/gradle-daemon-jvm.properties

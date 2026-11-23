@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Libwrap Demo</string>
+
+    <string name="main_title">android-libwrap</string>
+    <string name="main_subtitle">四个模块的能力演示：Coil 渐变模糊、Gson 脏数据修复、Lottie 共享缓存、ZXing 二维码。</string>
+
+    <string name="entry_blur">Coil · 渐变模糊（可切换 CPU / GPU）</string>
+    <string name="entry_json">Gson · 脏 JSON 容错修复</string>
+    <string name="entry_lottie">Lottie · 列表共享缓存</string>
+    <string name="entry_qr">ZXing · 带中心图标的二维码</string>
+
+    <string name="blur_top_hint">顶部 45% 区域模糊，18% 过渡带</string>
+    <string name="blur_bottom_hint">底部 55% 区域模糊 + 渐变色叠加</string>
+    <string name="blur_full_hint">整图模糊，硬边界</string>
+    <string name="blur_toggle_path">切换 CPU / GPU 路径</string>
+    <string name="blur_toggle_release">释放 / 恢复模糊效果</string>
+
+    <string name="json_input_hint">输入或粘贴一段脏 JSON</string>
+    <string name="json_next_sample">下一个样例</string>
+    <string name="json_repair">执行修复</string>
+
+    <string name="lottie_hint">40 行共用同一份 Composition，仅可见行播放，回收时释放引用。</string>
+
+    <string name="qr_input_hint">二维码内容</string>
+    <string name="qr_default_content">https://github.com/</string>
+    <string name="qr_generate">生成二维码</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ImageView 上缓存模糊效果实例的 tag key，避免和其他库的 tag 冲突 -->
+    <item name="libwrap_gradient_blur_effect" type="id" />
+    <item name="libwrap_loaded_data_key" type="id" />
+</resources>

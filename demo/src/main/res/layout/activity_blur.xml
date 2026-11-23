@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/text_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/blur_top_hint"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/image_top"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/blur_top_hint"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/blur_bottom_hint"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/image_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/blur_bottom_hint"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/blur_full_hint"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/image_full"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/blur_full_hint"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:id="@+id/button_toggle_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/blur_toggle_path" />
+
+        <Button
+            android:id="@+id/button_release"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/blur_toggle_release" />
+    </LinearLayout>
+</ScrollView>
