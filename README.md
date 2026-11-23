@@ -19,7 +19,7 @@
 - [项目结构](#项目结构)
 - [构建与验证](#构建与验证)
 - [常见问题](#常见问题)
-- [发布自己的版本](#发布自己的版本)
+- [维护者文档](#维护者文档)
 - [License](#license)
 
 ## 特性
@@ -80,35 +80,74 @@ implementation("io.coil-kt.coil3:coil:3.2.0")
 
 ## 接入
 
-JitPack（推荐，无需账号与密钥）：
+### 1. 前置条件
+
+- `minSdk` 21 及以上
+- `compileSdk` 37 及以上（AAR 的 `aar-metadata` 里写明了 `minCompileSdk=37`，低版本 AGP 会直接报错）
+- JDK 17 及以上
+
+### 2. 添加仓库
 
 ```kotlin
 // settings.gradle.kts
 dependencyResolutionManagement {
     repositories {
+        google()
+        mavenCentral()
         maven("https://jitpack.io") {
+            // 限定 group，避免 JitPack 参与其他依赖的解析、拖慢同步
             content { includeGroup("com.github.<你的GitHub用户名>") }
         }
     }
 }
 ```
 
+### 3. 添加依赖
+
+按需选模块，不必全加：
+
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.github.<你的GitHub用户名>.android-libwrap:coil:<tag>")
-    implementation("com.github.<你的GitHub用户名>.android-libwrap:gson:<tag>")
+    implementation("com.github.<你的GitHub用户名>.android-libwrap:coil:v0.1.0")    // 渐变模糊，依赖 Coil
+    implementation("com.github.<你的GitHub用户名>.android-libwrap:lottie:v0.1.0")  // 共享缓存，依赖 Lottie
+    implementation("com.github.<你的GitHub用户名>.android-libwrap:zxing:v0.1.0")   // 二维码，依赖 zxing-core
+    implementation("com.github.<你的GitHub用户名>.android-libwrap:gson:v0.1.0")    // 脏 JSON 修复，依赖 Gson
 }
 ```
 
-多模块仓库的坐标规则是 `com.github.用户.仓库:模块名:版本`，版本填 Git tag（如 `v0.1.0`）或提交哈希。
+坐标规则是 `com.github.用户.仓库:模块名:版本`。版本可以填：
 
-本地联调不需要网络：
+| 写法 | 含义 | 适用 |
+|---|---|---|
+| `v0.1.0` | Release tag | 生产使用 |
+| `a1b2c3d` | 提交短哈希 | 临时验证某个修复 |
+| `main-SNAPSHOT` | 分支最新提交 | 跟进开发分支，可能随时变化 |
+
+### 4. 本地联调（可选）
+
+不想等 JitPack 构建、或者要改源码验证时，走本地仓库：
 
 ```bash
+# 在 android-libwrap 仓库根目录
 ./gradlew publishToMavenLocal
-# 然后在宿主工程里加 mavenLocal()
 ```
+
+```kotlin
+// 宿主工程 settings.gradle.kts
+repositories {
+    mavenLocal()   // 放在 google()/mavenCentral() 之前才会优先命中
+}
+```
+
+### 集成时的常见问题
+
+| 现象 | 原因与处理 |
+|---|---|
+| 依赖解析 404 或一直转圈 | 该 tag 首次被请求时 JitPack 才开始构建，通常 1~3 分钟。日志见 `https://jitpack.io/com/github/用户/仓库/版本/build.log` |
+| 明明发了新 tag 却拿到旧内容 | JitPack 会缓存，加 `--refresh-dependencies` 重新解析 |
+| `Dependency requires compileSdk 37` | 宿主 `compileSdk` 低于 37，升上去即可 |
+| 类找不到 `coil3.transform.Transformation` | 宿主已引入其他版本的 Coil，被 Gradle 解析成了低版本；用 `./gradlew :app:dependencies` 确认实际版本 |
 
 ## coil：渐变模糊
 
@@ -269,6 +308,7 @@ android-libwrap/
 ├── lottie/         # 共享 Composition 缓存
 ├── zxing/          # 二维码编码
 ├── demo/           # View 体系示例 App（图片由代码生成，离线可跑）
+├── docs/           # 维护者文档（发布与版本策略）
 ├── gradle/libs.versions.toml
 └── .github/workflows/   # ci.yml / release.yml
 ```
@@ -280,7 +320,6 @@ android-libwrap/
 ```bash
 ./gradlew test                  # 60 个 JVM 单元测试
 ./gradlew :demo:assembleDebug   # 示例 APK：demo/build/outputs/apk/debug/demo-debug.apk
-./gradlew publishToMavenLocal   # 验证发布配置（坐标、POM、sources jar）
 ```
 
 `demo` 四个页面分别演示模糊、JSON 修复、Lottie 列表、二维码。Android Studio 直接打开工程、选择 `demo` 运行即可。
@@ -307,14 +346,9 @@ A：`preferGpu = true` 时低版本自动走 CPU 的 `GradientBlurTransformation
 **Q：Compose 能用吗？**
 A：`GradientBlurTransformation` 是标准 Coil `Transformation`，`AsyncImage` 可以直接用；`GradientBlurEffect`（AGSL）目前是 View 层实现，Compose 侧需要等 `Modifier` 版本。
 
-## 发布自己的版本
+## 维护者文档
 
-1. 修改坐标：`-Plibwrap.group=com.github.你的用户名 -Plibwrap.version=0.1.0`（或直接改 `gradle.properties`）
-2. 打 tag 并推送：`git tag v0.1.0 && git push origin v0.1.0`
-3. `release.yml` 会在 tag 上跑测试并创建 GitHub Release
-4. 首次有人请求依赖时 JitPack 自动构建，日志见 `https://jitpack.io/com/github/用户/仓库/版本/build.log`
-
-若要发布到 Maven Central，还需要 Sonatype 命名空间、GPG 签名与 Central Portal 上传。本项目已预留参数（`-PpublishRepoUrl` / `-PpublishRepoUser` / `-PpublishRepoPassword` / `-PsigningKey` / `-PsigningPassword`），但未包含上传流水线。
+发布坐标配置、tag 流程、JitPack 构建机制、Maven Central 的前置条件，见 [docs/PUBLISHING.md](docs/PUBLISHING.md)。普通使用者不需要读这一节。
 
 ## License
 
