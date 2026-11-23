@@ -55,7 +55,6 @@ git push origin v0.1.0
 
 1. `./gradlew test`（失败则中断，不创建 Release）
 2. `gh release create <tag> --generate-notes`
-
 GitHub Release 是 JitPack 的构建入口，没有 Release 就只有 `main-SNAPSHOT` 可用。
 
 `ci.yml` 在 push / PR 上执行 `test` → `:demo:assembleDebug` → `publishToMavenLocal`，最后一步是为了让发布配置的腐化在 PR 阶段就暴露。
@@ -114,3 +113,34 @@ GitHub Release 是 JitPack 的构建入口，没有 Release 就只有 `main-SNAP
 - 新增可选能力优先用**新函数/新重载**，而不是改现有构造器
 - 确实需要改构造器时升 minor 版本并在 CHANGELOG 标注，提示使用者重新编译
 - `@JvmOverloads` 只能保护 Java 调用方，保护不了 Kotlin 调用方
+
+## 7. 发布后验证
+
+制品"下载得到"不等于"依赖能解析"。JitPack 可能返回 200 的 POM，但 Gradle 侧因为坐标或仓库过滤配错而找不到，所以每次发布后都应从消费者视角实测一次。
+
+**第一步，确认制品存在：**
+
+```bash
+BASE=https://jitpack.io/com/github/git-a-live/openlibsextensions
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/coil/v0.1.0/coil-v0.1.0.aar
+```
+
+**第二步，用一个临时模块真实解析：**
+
+```kotlin
+// 临时加进 settings.gradle.kts
+include(":scratch")
+```
+```kotlin
+// scratch/build.gradle.kts（android library，无源码）
+dependencies {
+    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.0")
+}
+```
+```bash
+./gradlew :scratch:dependencies --configuration debugCompileClasspath --refresh-dependencies
+```
+
+输出里出现 `FAILED` 就说明坐标或仓库过滤有问题，验证完删掉 `scratch/` 与 `include(":scratch")`。
+
+**踩过的坑：`includeGroup` 是精确匹配。** 多模块项目的实际 group 是 `com.github.用户.仓库名`（三段），而仓库配置里常写成 `com.github.用户`（两段），后者匹配不到，JitPack 会被直接排除在解析之外，表现为"制品明明在，却找不到依赖"。要用 `includeGroupByRegex("com\\.github\\.用户(\\..*)?")` 或写全。

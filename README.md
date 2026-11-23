@@ -95,8 +95,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io") {
-            // 限定 group，避免 JitPack 参与其他依赖的解析、拖慢同步
-            content { includeGroup("com.github.git-a-live") }
+            // 限定 group，避免 JitPack 参与其他依赖的解析、拖慢同步。
+            // 注意实际 group 是 com.github.git-a-live.openlibsextensions（多模块在前缀后追加仓库名），
+            // includeGroup 是精确匹配，必须用正则或写全
+            content { includeGroupByRegex("com\\.github\\.git-a-live(\\..*)?") }
         }
     }
 }
