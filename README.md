@@ -61,7 +61,7 @@
 如果宿主必须停留在更低版本，可以自行排除并显式提供：
 
 ```kotlin
-implementation("com.github.Git-a-Live.OpenLibsExtensions:coil:v0.1.0") {
+implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.0") {
     exclude(group = "io.coil-kt.coil3", module = "coil")
 }
 implementation("io.coil-kt.coil3:coil:3.2.0")
@@ -96,7 +96,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io") {
             // 限定 group，避免 JitPack 参与其他依赖的解析、拖慢同步
-            content { includeGroup("com.github.Git-a-Live") }
+            content { includeGroup("com.github.git-a-live") }
         }
     }
 }
@@ -109,20 +109,22 @@ dependencyResolutionManagement {
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.github.Git-a-Live.OpenLibsExtensions:coil:v0.1.0")    // 渐变模糊，依赖 Coil
-    implementation("com.github.Git-a-Live.OpenLibsExtensions:lottie:v0.1.0")  // 共享缓存，依赖 Lottie
-    implementation("com.github.Git-a-Live.OpenLibsExtensions:zxing:v0.1.0")   // 二维码，依赖 zxing-core
-    implementation("com.github.Git-a-Live.OpenLibsExtensions:gson:v0.1.0")    // 脏 JSON 修复，依赖 Gson
+    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.0")    // 渐变模糊，依赖 Coil
+    implementation("com.github.git-a-live.openlibsextensions:lottie:v0.1.0")  // 共享缓存，依赖 Lottie
+    implementation("com.github.git-a-live.openlibsextensions:zxing:v0.1.0")   // 二维码，依赖 zxing-core
+    implementation("com.github.git-a-live.openlibsextensions:gson:v0.1.0")    // 脏 JSON 修复，依赖 Gson
 }
 ```
 
-坐标规则是 `com.github.Git-a-Live.OpenLibsExtensions:模块名:版本`。版本可以填：
+坐标规则是 `com.github.git-a-live.openlibsextensions:模块名:版本`。版本可以填：
 
 | 写法 | 含义 | 适用 |
 |---|---|---|
 | `v0.1.0` | Release tag | 生产使用 |
 | `a1b2c3d` | 提交短哈希 | 临时验证某个修复 |
 | `main-SNAPSHOT` | 分支最新提交 | 跟进开发分支，可能随时变化 |
+
+坐标全部小写。JitPack 的路径大小写不敏感（`com.github.philjay/mpandroidchart` 与 `com.github.PhilJay/MPAndroidChart` 返回相同内容，实测），但 Maven 约定要求坐标小写，这里统一小写书写。
 
 ### 4. 本地联调（可选）
 
@@ -144,7 +146,7 @@ repositories {
 
 | 现象 | 原因与处理 |
 |---|---|
-| 依赖解析 404 或一直转圈 | 该 tag 首次被请求时 JitPack 才开始构建，通常 1~3 分钟。日志见 `https://jitpack.io/com/github/Git-a-Live/OpenLibsExtensions/v0.1.0/build.log` |
+| 依赖解析 404 或一直转圈 | 该 tag 首次被请求时 JitPack 才开始构建，通常 1~3 分钟。日志见 `https://jitpack.io/com/github/git-a-live/openlibsextensions/v0.1.0/build.log` |
 | 明明发了新 tag 却拿到旧内容 | JitPack 会缓存，加 `--refresh-dependencies` 重新解析 |
 | `Dependency requires compileSdk 37` | 宿主 `compileSdk` 低于 37，升上去即可 |
 | 类找不到 `coil3.transform.Transformation` | 宿主已引入其他版本的 Coil，被 Gradle 解析成了低版本；用 `./gradlew :app:dependencies` 确认实际版本 |

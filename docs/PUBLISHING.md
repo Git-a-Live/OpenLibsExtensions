@@ -68,11 +68,11 @@ GitHub Release 是 JitPack 的构建入口，没有 Release 就只有 `main-SNAP
 ./gradlew clean publishToMavenLocal --stacktrace
 ```
 
-然后把 `~/.m2` 里的产物按 `com.github.Git-a-Live.OpenLibsExtensions:模块名:版本` 的坐标对外提供。
+然后把 `~/.m2` 里的产物按 `com.github.git-a-live.openlibsextensions:模块名:版本` 的坐标对外提供。
 
 几个需要知道的机制：
 
-- **按需构建**：第一次有人请求某个版本时才构建，通常 1~3 分钟。日志：`https://jitpack.io/com/github/Git-a-Live/OpenLibsExtensions/版本/build.log`
+- **按需构建**：第一次有人请求某个版本时才构建，通常 1~3 分钟。日志：`https://jitpack.io/com/github/git-a-live/openlibsextensions/版本/build.log`
 - **缓存**：同一版本构建成功后会被缓存，客户端需要 `--refresh-dependencies` 才能拿到重建结果
 - **不可变**：发布后 7 天产物冻结，之后的修复必须发新 tag
 - **多模块**：每个模块单独一个 artifactId，取的是 `artifactId` 而不是目录名（本项目两者一致）
