@@ -37,9 +37,9 @@ public class QrCodeOptions @JvmOverloads constructor(
 /**
  * 二维码生成。
  *
- * 相比直接调用 ZXing 的 `MultiFormatWriter`，这里额外处理两件实际会遇到的事：
- * 1. 用 `setPixels` 一次性写入像素数组，而不是逐点 `drawPoint`，大尺寸下快一个量级；
- * 2. 中心图标带一圈背景留白再绘制，避免图标与相邻码元贴边导致识别率骤降。
+ * 在 ZXing 的 `MultiFormatWriter` 之上额外处理两件事：
+ * 1. 通过 `setPixels` 一次性写入像素数组，大尺寸下较逐点绘制减少调用次数；
+ * 2. 中心图标外围绘制一圈背景留白，避免图标与相邻码元贴边导致识别率下降。
  */
 public object QrCodes {
 

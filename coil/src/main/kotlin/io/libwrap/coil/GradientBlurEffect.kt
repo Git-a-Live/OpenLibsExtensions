@@ -11,8 +11,8 @@ import androidx.annotation.RequiresApi
  *
  * 与 [GradientBlurTransformation] 的 CPU 实现共享同一套几何描述（[BlurBand]），
  * 但采样核不同：这里用**黄金角螺旋**在圆盘内布 16 个采样点，配合径向高斯权重，
- * 再借助纹理线性过滤把等效采样数放大到约 4 倍。相比逐个像素遍历 9×9 网格，
- * 采样次数从 81 次降到 16 次，且在片元着色器里是数据相关的分支无关的常数循环。
+ * 再借助纹理线性过滤把等效采样数放大到约 4 倍。单像素固定 16 次采样，
+ * 循环次数在编译期确定，不依赖运行时数据。
  *
  * 需要 API 33（`RuntimeShader`）。低版本请走 [GradientBlurTransformation]。
  */

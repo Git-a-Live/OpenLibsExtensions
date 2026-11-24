@@ -1,6 +1,6 @@
 # OpenLibsExtensions
 
-对 Coil、Gson、Lottie、ZXing、MMKV / DataStore 的轻量封装，拆分为互不依赖的 Gradle 模块：渐变模糊、脏 JSON 容错、列表动画共享缓存、二维码编码、键值存储。
+对 Coil、Gson、Moshi、Lottie、ZXing、MMKV / DataStore、WorkManager 的轻量封装，并提供协程任务索引，拆分为互不依赖的 Gradle 模块：渐变模糊、脏 JSON 容错、列表动画共享缓存、二维码编码、键值存储。
 
 各模块对应实际项目中反复出现的四类问题：低版本缺乏 GPU 模糊路径、服务端偶发返回损坏 JSON、列表内数十个 Lottie 实例各自解析动画、二维码叠加中心图标后识别率下降。除 `:kv-gson` 依赖 `:kv` 外，模块间无依赖关系，均可单独引入。
 
@@ -17,6 +17,8 @@
 - [lottie：列表共享缓存](#lottie列表共享缓存)
 - [zxing：二维码](#zxing二维码)
 - [kv：键值存储](#kv键值存储)
+- [coroutines：协程任务索引](#coroutines协程任务索引)
+- [workmanager：请求构造](#workmanager请求构造)
 - [常见问题](#常见问题)
 - [相关文档](#相关文档)
 - [License](#license)
@@ -55,6 +57,8 @@
 | `:moshi` | `com.squareup.moshi:moshi:1.15.2` | `requires`（下限） |
 | `:kv` | `com.tencent:mmkv:2.4.3`、`androidx.datastore:datastore-preferences:1.3.0`、`org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0` | `requires`（下限） |
 | `:kv-gson` | `:kv`、`com.google.code.gson:gson:2.15.0` | `requires`（下限） |
+| `:coroutines` | `org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0` | `requires`（下限） |
+| `:workmanager` | `androidx.work:work-runtime:2.12.0`、`androidx.annotation:1.11.0` | `requires`（下限） |
 
 `requires` 表示下限而非版本锁：宿主使用更高版本时由 Gradle 取高者，本库不会降级；使用更低版本时会被抬至表中版本。
 
@@ -65,7 +69,7 @@
 宿主需停留在更低版本时，可排除后显式提供：
 
 ```kotlin
-implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.3") {
+implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.4") {
     exclude(group = "io.coil-kt.coil3", module = "coil")
 }
 implementation("io.coil-kt.coil3:coil:3.2.0")
@@ -84,6 +88,8 @@ implementation("io.coil-kt.coil3:coil:3.2.0")
 | `:zxing` | ZXing core | 二维码生成，支持中心图标与纠错等级配置 |
 | `:kv` | MMKV / DataStore / kotlinx.serialization | 泛型中缀键值读写，按运行时类型选择存储方式 |
 | `:kv-gson` | `:kv` + Gson | 可选编解码器，支持未标注 `@Serializable` 的普通类 |
+| `:coroutines` | kotlinx-coroutines | 按标识登记与取消协程任务，注册表自动清理 |
+| `:workmanager` | WorkManager | 请求构造与约束拼装，worker 类型由调用点推导 |
 
 ## 接入
 
@@ -119,13 +125,15 @@ dependencyResolutionManagement {
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.3")    // 渐变模糊
-    implementation("com.github.git-a-live.openlibsextensions:lottie:v0.1.3")  // 共享缓存
-    implementation("com.github.git-a-live.openlibsextensions:zxing:v0.1.3")   // 二维码
-    implementation("com.github.git-a-live.openlibsextensions:kv:v0.1.3")      // 键值存储
-    implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.3") // 可选：支持普通类
-    implementation("com.github.git-a-live.openlibsextensions:gson:v0.1.3")    // 脏 JSON 修复
-    implementation("com.github.git-a-live.openlibsextensions:moshi:v0.1.3")   // Moshi 序列化与取值
+    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.4")    // 渐变模糊
+    implementation("com.github.git-a-live.openlibsextensions:lottie:v0.1.4")  // 共享缓存
+    implementation("com.github.git-a-live.openlibsextensions:zxing:v0.1.4")   // 二维码
+    implementation("com.github.git-a-live.openlibsextensions:kv:v0.1.4")      // 键值存储
+    implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.4") // 可选：支持普通类
+    implementation("com.github.git-a-live.openlibsextensions:gson:v0.1.4")    // 脏 JSON 修复
+    implementation("com.github.git-a-live.openlibsextensions:moshi:v0.1.4")   // Moshi 序列化与取值
+    implementation("com.github.git-a-live.openlibsextensions:coroutines:v0.1.4")   // 协程任务索引
+    implementation("com.github.git-a-live.openlibsextensions:workmanager:v0.1.4")  // WorkManager 请求构造
 }
 ```
 
@@ -133,7 +141,7 @@ dependencies {
 
 | 版本写法 | 含义 | 适用场景 |
 |---|---|---|
-| `v0.1.3` | Release tag | 生产环境 |
+| `v0.1.4` | Release tag | 生产环境 |
 | `a1b2c3d` | 提交短哈希 | 验证单个修复 |
 | `main-SNAPSHOT` | 分支最新提交 | 跟进开发分支 |
 
@@ -159,7 +167,7 @@ repositories {
 
 | 现象 | 原因与处理 |
 |---|---|
-| 依赖解析 404 或长时间无响应 | 该 tag 首次被请求时 JitPack 开始构建，通常 1~3 分钟。构建日志见 `https://jitpack.io/com/github/git-a-live/openlibsextensions/v0.1.3/build.log` |
+| 依赖解析 404 或长时间无响应 | 该 tag 首次被请求时 JitPack 开始构建，通常 1~3 分钟。构建日志见 `https://jitpack.io/com/github/git-a-live/openlibsextensions/v0.1.4/build.log` |
 | 新 tag 解析到旧内容 | JitPack 存在缓存，使用 `--refresh-dependencies` 重新解析 |
 | `Dependency requires compileSdk 37` | 宿主 `compileSdk` 低于 37 |
 | 找不到 `coil3.transform.Transformation` | 宿主引入了其他版本的 Coil，被解析为低版本；用 `./gradlew :app:dependencies` 确认实际版本 |
@@ -409,7 +417,7 @@ val users: List<User>? = getKV("users")
 未标注 `@Serializable` 的类型不会被写入，也不抛出异常。需要支持普通类时，引入可选模块并替换编解码器：
 
 ```kotlin
-implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.3")
+implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.4")
 
 Kv.useCodec(GsonKvCodec())   // 初始化阶段设置一次
 
@@ -425,6 +433,45 @@ Gson 走反射序列化，宿主需在 R8 配置中保留数据类的无参构�
 
 - 同一 key 必须使用同一类型读写。存储层不记录值的类型，类型不符时的读取结果未定义。
 - `putKV(key, null)` 表示删除该键，而非写入 null。
+
+## coroutines：协程任务索引
+
+按 [TaskTag] 登记任务，支持按标识取消。任务挂在调用方作用域上，生命周期受其约束。
+
+```kotlin
+val tag = TaskTag("poll-config")
+
+scope.launchTask(tag) { refresh() }
+scope.launchDelayedTask(tag, delayMillis = 500) { refresh() }
+scope.launchRepeatingTask(tag, periodMillis = 60_000) { refresh() }
+
+CoroutineTasks.cancel(tag)
+CoroutineTasks.cancelAll()
+```
+
+| 特性 | 行为 |
+|---|---|
+| 注册表清理 | 任务结束（完成、异常、取消）时自动移除条目，数量等于存活任务数 |
+| 线程安全 | 基于 `ConcurrentHashMap`，移除时比对 Job 实例，不误删后启动的同名任务 |
+| 同一 tag | 替换语义，启动前取消该 tag 上的任务 |
+| 周期模式 | `FixedRate` 以启动时刻排期，执行耗时不计入；`FixedDelay` 每次结束后再等待 |
+
+`launchRepeatingTask` 的 `clock` 参数默认取 `System.nanoTime()`，单元测试可注入虚拟时钟以获得确定结果。
+
+## workmanager：请求构造
+
+```kotlin
+oneTimeRequest(
+    workerClass = SyncWorker::class.java,
+    tag = "sync",
+    constraints = buildConstraints(networkType = NetworkType.CONNECTED),
+    backoff = Backoff(BackoffPolicy.EXPONENTIAL, delayMillis = 30_000),
+)
+```
+
+- `oneTimeRequestBuilder<T>()` 与 `periodicRequestBuilder<T>()` 通过 `reified` 取得具体 worker 类型，`Builder` 持有的即为该类型
+- `Backoff` 与周期参数在构造期校验下限（退避 ≥ 10s、周期 ≥ 15min），越界直接抛出
+- `WorkScheduler` 提供 `init(context)` 与按标签、唯一名称、单次请求的取消入口
 
 ## 常见问题
 

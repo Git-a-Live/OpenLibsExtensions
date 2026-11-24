@@ -8,7 +8,7 @@ package io.libwrap.gson
  *
  * 校验口径比 Gson 默认的 lenient 模式更严格（RFC 8259）：拒绝前导零数字、单引号、
  * 注释、尾随逗号，字符串内拒绝未转义控制字符。偏严格是刻意的——修复的目标是让文本
- * 能被任何标准解析器接受，而不是只让 Gson 接受。
+ * 能被任意标准解析器接受。
  */
 internal object JsonSyntax {
 

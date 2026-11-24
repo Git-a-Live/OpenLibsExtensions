@@ -11,7 +11,7 @@ plugins {
 
 // 发布坐标集中在此处维护，模块内不再各自声明
 val libraryGroup: String = providers.gradleProperty("libwrap.group").getOrElse("io.github.git-a-live")
-val libraryVersion: String = providers.gradleProperty("libwrap.version").getOrElse("0.1.3")
+val libraryVersion: String = providers.gradleProperty("libwrap.version").getOrElse("0.1.4")
 val projectHomepage = "https://github.com/Git-a-Live/OpenLibsExtensions"
 
 /**

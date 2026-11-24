@@ -4,17 +4,17 @@
 
 ## 1. 坐标
 
-group 与 version 在根 `build.gradle.kts` 中读取，默认值为 `io.github.git-a-live` / `0.1.3`，以该文件为准。
+group 与 version 在根 `build.gradle.kts` 中读取，默认值为 `io.github.git-a-live` / `0.1.4`，以该文件为准。
 
 三种配置方式，优先级由低到高：
 
 ```bash
 # 1) gradle.properties，长期生效
 libwrap.group=io.github.git-a-live
-libwrap.version=0.1.3
+libwrap.version=0.1.4
 
 # 2) 命令行参数，单次生效
-./gradlew publishToMavenLocal -Plibwrap.group=io.github.git-a-live -Plibwrap.version=0.1.3
+./gradlew publishToMavenLocal -Plibwrap.group=io.github.git-a-live -Plibwrap.version=0.1.4
 
 # 3) 发布到远端仓库时附加地址与凭据
 ./gradlew publish -PpublishRepoUrl=https://... -PpublishRepoUser=xxx -PpublishRepoPassword=xxx
@@ -22,20 +22,20 @@ libwrap.version=0.1.3
 
 未传 `publishRepoUrl` 时不添加任何远端仓库，`publishToMavenLocal` 仅写入本机 `~/.m2`。
 
-模块的 `artifactId` 取目录名（`coil` / `gson` / `moshi` / `lottie` / `zxing` / `kv` / `kv-gson`），不单独配置。
+模块的 `artifactId` 取目录名（`coil` / `gson` / `moshi` / `lottie` / `zxing` / `kv` / `kv-gson` / `coroutines` / `workmanager`），不单独配置。
 
 ## 2. 发布前自检
 
 ```bash
-./gradlew test                      # 93 个用例需全部通过
-./gradlew publishToMavenLocal       # 七个模块各产出 aar/jar + sources + pom
+./gradlew test                      # 111 个用例需全部通过
+./gradlew publishToMavenLocal       # 九个模块各产出 aar/jar + sources + pom
 ```
 
 产物形态检查：
 
 ```bash
-ls ~/.m2/repository/io/github/git-a-live/coil/0.1.3/
-# coil-0.1.3.aar / coil-0.1.3-sources.jar / coil-0.1.3.pom / coil-0.1.3.module
+ls ~/.m2/repository/io/github/git-a-live/coil/0.1.4/
+# coil-0.1.4.aar / coil-0.1.4-sources.jar / coil-0.1.4.pom / coil-0.1.4.module
 
 unzip -p coil/build/outputs/aar/coil-release.aar \
   META-INF/com/android/build/gradle/aar-metadata.properties
@@ -47,8 +47,8 @@ unzip -p coil/build/outputs/aar/coil-release.aar \
 ## 3. tag 与 Release
 
 ```bash
-git tag v0.1.3
-git push origin v0.1.3
+git tag v0.1.4
+git push origin v0.1.4
 ```
 
 `.github/workflows/release.yml` 在 tag 上执行：
@@ -123,7 +123,7 @@ Central Portal 的上传流水线尚未实现。
 
 ```bash
 BASE=https://jitpack.io/com/github/git-a-live/openlibsextensions
-curl -s -o /dev/null -w "%{http_code}\n" $BASE/coil/v0.1.3/coil-v0.1.3.aar
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/coil/v0.1.4/coil-v0.1.4.aar
 ```
 
 第二步，以临时模块实际解析：
@@ -135,7 +135,7 @@ include(":scratch")
 ```kotlin
 // scratch/build.gradle.kts，android library，无源码
 dependencies {
-    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.3")
+    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.4")
 }
 ```
 ```bash

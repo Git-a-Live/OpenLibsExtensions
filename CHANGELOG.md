@@ -2,6 +2,15 @@
 
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。Kotlin 库存在一项二进制兼容约束：为公开类型新增带默认值的构造器参数，对 Kotlin 调用方构成二进制破坏，此类改动升 minor。
 
+## 0.1.4
+
+### 新增
+
+- `:coroutines` 协程任务索引。`TaskTag` 值类型标识、任务结束时自动移除注册表条目、
+  同一标识为替换语义；周期任务区分 `FixedRate`（按启动时刻排期）与 `FixedDelay`。
+- `:workmanager` 请求构造。`reified` 取得具体 worker 类型，退避与周期参数在构造期校验下限，
+  `WorkScheduler` 提供初始化与按标签、唯一名称取消的入口。
+
 ## 0.1.3
 
 ### 新增
