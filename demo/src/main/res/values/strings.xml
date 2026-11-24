@@ -25,4 +25,6 @@
     <string name="qr_input_hint">二维码内容</string>
     <string name="qr_default_content">https://github.com/</string>
     <string name="qr_generate">生成二维码</string>
+
+    <string name="entry_trial">试听区间进度条</string>
 </resources>

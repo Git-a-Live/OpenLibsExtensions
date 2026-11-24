@@ -15,8 +15,11 @@ OpenLibsExtensions/
 ├── kv-gson/        # 可选编解码器：基于 Gson 反射，支持普通类
 ├── coroutines/     # 纯 Kotlin：协程任务索引与周期调度
 ├── workmanager/    # WorkManager 请求构造与调度门面
+├── trial/          # 试听区间进度条：模型、样式、View 实现
+├── trial-compose/  # 同一控件的 Compose 实现
 ├── demo/           # View 体系示例 App，图片由代码生成，离线可运行
 ├── docs/           # 维护者文档
+│   └── modules/    # 各模块的使用文档
 ├── gradle/libs.versions.toml
 └── .github/workflows/   # ci.yml / release.yml
 ```
@@ -29,14 +32,20 @@ OpenLibsExtensions/
 - 检测到 `JITPACK=true` 环境变量时跳过镜像，直接使用官方源，避免海外构建机被镜像拖慢
 
 ```bash
-./gradlew test                  # 111 个 JVM 单元测试
+./gradlew test                  # 120 个 JVM 单元测试
 ./gradlew :demo:assembleDebug   # 示例 APK：demo/build/outputs/apk/debug/demo-debug.apk
 ./gradlew publishToMavenLocal   # 验证发布配置：坐标、POM、sources jar
 ```
 
-`demo` 包含四个页面，分别演示渐变模糊、JSON 修复、Lottie 列表与二维码。Android Studio 打开工程后选择 `demo` 运行。
+`demo` 包含五个页面，分别演示渐变模糊、JSON 修复、Lottie 列表、二维码与试听区间进度条。Android Studio 打开工程后选择 `demo` 运行。
 
 CI 在每次提交执行 `test`、`:demo:assembleDebug`、`publishToMavenLocal`，任一失败即中断。`release.yml` 在 `v*` tag 上运行测试并创建 GitHub Release。
+
+## 文档约定
+
+- 根 `README.md` 只保留定位、兼容性、依赖契约、模块索引与接入步骤，不承载单个模块的用法
+- 每个模块在 `docs/modules/` 下有独立文档，内容为用法、API、限制与常见问题
+- 新增模块需同时更新：根 README 的模块表与依赖契约、`docs/modules/` 下的模块文档、CHANGELOG
 
 ## 代码约定
 
@@ -53,7 +62,8 @@ CI 在每次提交执行 `test`、`:demo:assembleDebug`、`publishToMavenLocal`�
 | 模块 | 目标 | 依据 |
 |---|---|---|
 | `:coil` | Java 11 | Coil 3 的字节码为 JVM 11，且 `ImageView.load` 为 inline 函数，低于 11 无法编译 |
-| `:lottie` `:zxing` `:gson` `:kv` `:kv-gson` | Java 8 | 无更高版本的 API 需求 |
+| `:lottie` `:zxing` `:gson` `:kv` `:kv-gson` `:coroutines` `:trial` | Java 8 | 无更高版本的 API 需求 |
+| `:workmanager` `:trial-compose` | Java 11 | WorkManager 与 Compose 的字节码为 JVM 11 |
 | `:demo` | Java 17 | 应用模块，不对外发布 |
 
 公开 `inline` 函数会导致宿主受同一约束：Kotlin 禁止将高版本字节码内联进低版本目标。调整该配置需同步更新 README 的兼容性表。
@@ -83,3 +93,5 @@ CI 在每次提交执行 `test`、`:demo:assembleDebug`、`publishToMavenLocal`�
 - `RuntimeShader` 在运行时编译，个别 GPU 驱动可能拒绝复杂着色器
 - GitHub Actions 首次运行需确认托管 runner 是否预装 `compileSdk 37`，工作流中已包含补装步骤
 - Moshi 最新版本 1.15.2 发布于 2024-12，上游迭代节奏较慢；`moshi-kotlin` 会引入 kotlin-reflect，本仓库不依赖
+- Compose 使用 BOM 2026.09.00（Compose 1.12.1）。BOM 2026.11.01 起的构件要求 `compileSdk 37.1`，
+  会使 `:trial-compose` 的 AAR 写入更高的 `minCompileSdk`，抬高宿主门槛，故未采用

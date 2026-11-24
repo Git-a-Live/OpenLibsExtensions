@@ -23,5 +23,8 @@ class MainActivity : Activity() {
         findViewById<Button>(R.id.button_qr).setOnClickListener {
             startActivity(Intent(this, QrCodeActivity::class.java))
         }
+        findViewById<Button>(R.id.button_trial).setOnClickListener {
+            startActivity(Intent(this, TrialSeekBarActivity::class.java))
+        }
     }
 }

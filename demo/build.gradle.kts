@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -12,6 +13,10 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     compileOptions {
@@ -27,4 +32,13 @@ dependencies {
     implementation(project(":zxing"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.recyclerview)
+
+    // Compose 演示页：试听区间进度条
+    implementation(project(":trial"))
+    implementation(project(":trial-compose"))
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
 }

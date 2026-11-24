@@ -35,6 +35,11 @@
             android:name=".QrCodeActivity"
             android:exported="false"
             android:label="@string/entry_qr" />
+
+        <activity
+            android:name=".TrialSeekBarActivity"
+            android:exported="false"
+            android:label="@string/entry_trial" />
     </application>
 
 </manifest>

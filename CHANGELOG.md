@@ -2,6 +2,20 @@
 
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。Kotlin 库存在一项二进制兼容约束：为公开类型新增带默认值的构造器参数，对 Kotlin 调用方构成二进制破坏，此类改动升 minor。
 
+## 0.1.6
+
+### 新增
+
+- `:trial` 试听区间进度条（View）。区间内外四色独立配置，端点支持 `None` / `Line` / `Circle` /
+  自定义绘制；越界仅上报回调，不内置业务动作。
+- `:trial-compose` 同一控件的 Compose 实现，与 View 版共用 `TrialRange` 与 `TrialSeekBarStyle`。
+
+### 文档
+
+- 根 README 改为索引结构，各模块用法迁移至 `docs/modules/`
+- 新增英文版 README 与全部模块文档的英文版
+- 移除根 README 的本地联调节，相关内容保留在维护者文档
+
 ## 0.1.5
 
 ### 变更
