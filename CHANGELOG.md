@@ -2,6 +2,13 @@
 
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。Kotlin 库存在一项二进制兼容约束：为公开类型新增带默认值的构造器参数，对 Kotlin 调用方构成二进制破坏，此类改动升 minor。
 
+## 0.1.5
+
+### 变更
+
+- `:coroutines` 的 `delay` 调用改用 `Duration` 重载（`millis.milliseconds`），
+  与 Kotlin 的时长 API 保持一致；等待时长与调度行为不变。
+
 ## 0.1.4
 
 ### 新增

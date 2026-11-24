@@ -69,7 +69,7 @@
 宿主需停留在更低版本时，可排除后显式提供：
 
 ```kotlin
-implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.4") {
+implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.5") {
     exclude(group = "io.coil-kt.coil3", module = "coil")
 }
 implementation("io.coil-kt.coil3:coil:3.2.0")
@@ -125,15 +125,15 @@ dependencyResolutionManagement {
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.4")    // 渐变模糊
-    implementation("com.github.git-a-live.openlibsextensions:lottie:v0.1.4")  // 共享缓存
-    implementation("com.github.git-a-live.openlibsextensions:zxing:v0.1.4")   // 二维码
-    implementation("com.github.git-a-live.openlibsextensions:kv:v0.1.4")      // 键值存储
-    implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.4") // 可选：支持普通类
-    implementation("com.github.git-a-live.openlibsextensions:gson:v0.1.4")    // 脏 JSON 修复
-    implementation("com.github.git-a-live.openlibsextensions:moshi:v0.1.4")   // Moshi 序列化与取值
-    implementation("com.github.git-a-live.openlibsextensions:coroutines:v0.1.4")   // 协程任务索引
-    implementation("com.github.git-a-live.openlibsextensions:workmanager:v0.1.4")  // WorkManager 请求构造
+    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.5")    // 渐变模糊
+    implementation("com.github.git-a-live.openlibsextensions:lottie:v0.1.5")  // 共享缓存
+    implementation("com.github.git-a-live.openlibsextensions:zxing:v0.1.5")   // 二维码
+    implementation("com.github.git-a-live.openlibsextensions:kv:v0.1.5")      // 键值存储
+    implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.5") // 可选：支持普通类
+    implementation("com.github.git-a-live.openlibsextensions:gson:v0.1.5")    // 脏 JSON 修复
+    implementation("com.github.git-a-live.openlibsextensions:moshi:v0.1.5")   // Moshi 序列化与取值
+    implementation("com.github.git-a-live.openlibsextensions:coroutines:v0.1.5")   // 协程任务索引
+    implementation("com.github.git-a-live.openlibsextensions:workmanager:v0.1.5")  // WorkManager 请求构造
 }
 ```
 
@@ -141,7 +141,7 @@ dependencies {
 
 | 版本写法 | 含义 | 适用场景 |
 |---|---|---|
-| `v0.1.4` | Release tag | 生产环境 |
+| `v0.1.5` | Release tag | 生产环境 |
 | `a1b2c3d` | 提交短哈希 | 验证单个修复 |
 | `main-SNAPSHOT` | 分支最新提交 | 跟进开发分支 |
 
@@ -167,7 +167,7 @@ repositories {
 
 | 现象 | 原因与处理 |
 |---|---|
-| 依赖解析 404 或长时间无响应 | 该 tag 首次被请求时 JitPack 开始构建，通常 1~3 分钟。构建日志见 `https://jitpack.io/com/github/git-a-live/openlibsextensions/v0.1.4/build.log` |
+| 依赖解析 404 或长时间无响应 | 该 tag 首次被请求时 JitPack 开始构建，通常 1~3 分钟。构建日志见 `https://jitpack.io/com/github/git-a-live/openlibsextensions/v0.1.5/build.log` |
 | 新 tag 解析到旧内容 | JitPack 存在缓存，使用 `--refresh-dependencies` 重新解析 |
 | `Dependency requires compileSdk 37` | 宿主 `compileSdk` 低于 37 |
 | 找不到 `coil3.transform.Transformation` | 宿主引入了其他版本的 Coil，被解析为低版本；用 `./gradlew :app:dependencies` 确认实际版本 |
@@ -417,7 +417,7 @@ val users: List<User>? = getKV("users")
 未标注 `@Serializable` 的类型不会被写入，也不抛出异常。需要支持普通类时，引入可选模块并替换编解码器：
 
 ```kotlin
-implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.4")
+implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.5")
 
 Kv.useCodec(GsonKvCodec())   // 初始化阶段设置一次
 

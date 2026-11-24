@@ -9,6 +9,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 按 [TaskTag] 登记协程任务，提供按标识取消的能力。
@@ -74,7 +75,7 @@ public fun CoroutineScope.launchDelayedTask(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit,
 ): Job = launch(start = start) {
-    delay(delayMillis)
+    delay(delayMillis.milliseconds)
     block()
 }.also { CoroutineTasks.register(tag, it) }
 
@@ -101,10 +102,10 @@ public fun CoroutineScope.launchRepeatingTask(
     return launchTask(tag) {
         when (mode) {
             RepeatMode.FixedDelay -> {
-                delay(initialDelayMillis)
+                delay(initialDelayMillis.milliseconds)
                 while (isActive) {
                     block()
-                    delay(periodMillis)
+                    delay(periodMillis.milliseconds)
                 }
             }
 
@@ -114,7 +115,7 @@ public fun CoroutineScope.launchRepeatingTask(
                 while (isActive) {
                     val target = origin + iteration * periodMillis
                     val wait = target - clock()
-                    if (wait > 0) delay(wait)
+                    if (wait > 0) delay(wait.milliseconds)
                     block()
                     iteration++
                 }
