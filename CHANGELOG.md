@@ -1,6 +1,21 @@
 # Changelog
 
-版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。Kotlin 库需特别注意：给公开类型新增带默认值的构造器参数，对 Kotlin 调用方属于二进制破坏，这类改动会升 minor。
+版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。Kotlin 库存在一项二进制兼容约束：为公开类型新增带默认值的构造器参数，对 Kotlin 调用方构成二进制破坏，此类改动升 minor。
+
+## 0.1.2
+
+### 新增
+
+- `:kv` 键值存储模块。泛型中缀读写（`42 toKey "age"` / `getKV<Int>("age")` / `String::class fromKey "age"`），
+  写入按运行时类型自适应选择 MMKV 的原生编码接口，其余类型用 kotlinx.serialization 序列化为 JSON（目标类需标注 `@Serializable`）。
+- 提供 MMKV（同步）与 DataStore（挂起）两个后端，共用同一套类型分发规则，
+  语法一致、导入不同包即可切换。
+- `:kv` 不依赖 Gson，序列化层只用 kotlinx.serialization，避免运行时反射序列化在 R8 下的额外 keep 成本。
+- 新增 `KvCodec` 编解码协议：确认 `Kv.useCodec(...)` 可替换复合类型的序列化实现，两个后端共用。
+- 新增 `:kv-gson` 模块，提供基于 Gson 反射的 `GsonKvCodec`，使未标注 `@Serializable`
+  的普通类可读写；`:kv` 主模块不引入该依赖。
+- 泛型集合修复：`List<T>` 等复合类型此前查不到元素序列化器、静默不存储；
+  现在通过 `typeOf<T>()` 把完整类型信息传给编解码器，`getKV<List<T>>` 可正常往返。
 
 ## 0.1.1
 
