@@ -4,17 +4,17 @@
 
 ## 1. 坐标
 
-group 与 version 在根 `build.gradle.kts` 中读取，默认值为 `io.github.git-a-live` / `0.1.2`，以该文件为准。
+group 与 version 在根 `build.gradle.kts` 中读取，默认值为 `io.github.git-a-live` / `0.1.3`，以该文件为准。
 
 三种配置方式，优先级由低到高：
 
 ```bash
 # 1) gradle.properties，长期生效
 libwrap.group=io.github.git-a-live
-libwrap.version=0.1.2
+libwrap.version=0.1.3
 
 # 2) 命令行参数，单次生效
-./gradlew publishToMavenLocal -Plibwrap.group=io.github.git-a-live -Plibwrap.version=0.1.2
+./gradlew publishToMavenLocal -Plibwrap.group=io.github.git-a-live -Plibwrap.version=0.1.3
 
 # 3) 发布到远端仓库时附加地址与凭据
 ./gradlew publish -PpublishRepoUrl=https://... -PpublishRepoUser=xxx -PpublishRepoPassword=xxx
@@ -34,8 +34,8 @@ libwrap.version=0.1.2
 产物形态检查：
 
 ```bash
-ls ~/.m2/repository/io/github/git-a-live/coil/0.1.2/
-# coil-0.1.2.aar / coil-0.1.2-sources.jar / coil-0.1.2.pom / coil-0.1.2.module
+ls ~/.m2/repository/io/github/git-a-live/coil/0.1.3/
+# coil-0.1.3.aar / coil-0.1.3-sources.jar / coil-0.1.3.pom / coil-0.1.3.module
 
 unzip -p coil/build/outputs/aar/coil-release.aar \
   META-INF/com/android/build/gradle/aar-metadata.properties
@@ -47,8 +47,8 @@ unzip -p coil/build/outputs/aar/coil-release.aar \
 ## 3. tag 与 Release
 
 ```bash
-git tag v0.1.2
-git push origin v0.1.2
+git tag v0.1.3
+git push origin v0.1.3
 ```
 
 `.github/workflows/release.yml` 在 tag 上执行：
@@ -123,7 +123,7 @@ Central Portal 的上传流水线尚未实现。
 
 ```bash
 BASE=https://jitpack.io/com/github/git-a-live/openlibsextensions
-curl -s -o /dev/null -w "%{http_code}\n" $BASE/coil/v0.1.2/coil-v0.1.2.aar
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/coil/v0.1.3/coil-v0.1.3.aar
 ```
 
 第二步，以临时模块实际解析：
@@ -135,7 +135,7 @@ include(":scratch")
 ```kotlin
 // scratch/build.gradle.kts，android library，无源码
 dependencies {
-    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.2")
+    implementation("com.github.git-a-live.openlibsextensions:coil:v0.1.3")
 }
 ```
 ```bash
