@@ -8,6 +8,7 @@
 OpenLibsExtensions/
 ├── coil/           # 渐变模糊：StackBlur + AGSL + Coil Transformation + ImageView 扩展
 ├── gson/           # 纯 Kotlin：安全取值 + 脏 JSON 修复
+├── moshi/          # 纯 Kotlin：序列化入口 + 无类型映射取值
 ├── lottie/         # 共享 Composition 缓存
 ├── zxing/          # 二维码编码
 ├── kv/             # 键值存储：类型分发 + MMKV / DataStore 双后端
@@ -26,7 +27,7 @@ OpenLibsExtensions/
 - 检测到 `JITPACK=true` 环境变量时跳过镜像，直接使用官方源，避免海外构建机被镜像拖慢
 
 ```bash
-./gradlew test                  # 82 个 JVM 单元测试
+./gradlew test                  # 93 个 JVM 单元测试
 ./gradlew :demo:assembleDebug   # 示例 APK：demo/build/outputs/apk/debug/demo-debug.apk
 ./gradlew publishToMavenLocal   # 验证发布配置：坐标、POM、sources jar
 ```
@@ -70,9 +71,11 @@ CI 在每次提交执行 `test`、`:demo:assembleDebug`、`publishToMavenLocal`�
 | 列表 Lottie | 每个 item 配置 `lottie_rawRes` | 全局共享 Composition | 需在 `onBindViewHolder` / `onViewRecycled` 中显式调用 |
 | 二维码 | `zxing-android-embedded` | 仅做编码 | 不含扫码 UI，扫码需另行接入 CameraX 等方案 |
 | 键值存储序列化 | 固定依赖某一 JSON 库 | `KvCodec` 协议，默认 kotlinx.serialization，可替换 | 默认实现不支持普通类，需引入 `:kv-gson` |
+| JSON 库封装 | 同时支持 Gson 与 Moshi 全部特性 | 按库各自建模：`:gson` 提供反射与修复，`:moshi` 提供 adapter 入口与取值 | 两套 API 不完全对称，需分别说明 |
 
 ## 已知限制
 
 - GPU 模糊路径缺少真机逐像素比对，仅有编译期与逻辑验证
 - `RuntimeShader` 在运行时编译，个别 GPU 驱动可能拒绝复杂着色器
 - GitHub Actions 首次运行需确认托管 runner 是否预装 `compileSdk 37`，工作流中已包含补装步骤
+- Moshi 最新版本 1.15.2 发布于 2024-12，上游迭代节奏较慢；`moshi-kotlin` 会引入 kotlin-reflect，本仓库不依赖

@@ -63,12 +63,12 @@ class JsonRepairTest {
 
     @Test
     fun `修复字符串值里的一组未转义引号`() {
-        val raw = """{"desc":"他说"你好"就走了","n":1}"""
+        val raw = """{"desc":"他称"收到"后离开","n":1}"""
         val result = JsonRepair.repair(raw)
         assertNotNull(result)
         assertEquals(listOf(Fix.UNESCAPED_QUOTES), result!!.applied)
         val parsed = GsonKit.gson.fromJson(result.text, Map::class.java)
-        assertEquals("他说\"你好\"就走了", parsed["desc"])
+        assertEquals("他称\"收到\"后离开", parsed["desc"])
     }
 
     @Test

@@ -37,6 +37,7 @@ rootProject.name = "OpenLibsExtensions"
 include(":coil")
 include(":lottie")
 include(":gson")
+include(":moshi")
 include(":zxing")
 include(":kv")
 include(":kv-gson")

@@ -13,6 +13,7 @@
 - [接入](#接入)
 - [coil：渐变模糊](#coil渐变模糊)
 - [gson：脏 JSON 容错](#gson脏-json-容错)
+- [moshi：序列化与安全取值](#moshi序列化与安全取值)
 - [lottie：列表共享缓存](#lottie列表共享缓存)
 - [zxing：二维码](#zxing二维码)
 - [kv：键值存储](#kv键值存储)
@@ -51,6 +52,7 @@
 | `:lottie` | `com.airbnb.android:lottie:6.7.1`、`androidx.annotation:1.11.0` | `requires`（下限） |
 | `:zxing` | `com.google.zxing:core:3.5.4` | `requires`（下限） |
 | `:gson` | `com.google.code.gson:gson:2.15.0` | `requires`（下限） |
+| `:moshi` | `com.squareup.moshi:moshi:1.15.2` | `requires`（下限） |
 | `:kv` | `com.tencent:mmkv:2.4.3`、`androidx.datastore:datastore-preferences:1.3.0`、`org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0` | `requires`（下限） |
 | `:kv-gson` | `:kv`、`com.google.code.gson:gson:2.15.0` | `requires`（下限） |
 
@@ -77,6 +79,7 @@ implementation("io.coil-kt.coil3:coil:3.2.0")
 |---|---|---|
 | `:coil` | Coil 3.x | 顶部/底部渐变模糊、渐变色叠加、GPU(AGSL) 与 CPU(StackBlur) 双路径 |
 | `:gson` | Gson | 安全取值扩展、三类脏 JSON 修复（非法转义 / 未转义引号 / 尾部截断） |
+| `:moshi` | Moshi | 序列化入口与无类型映射的安全取值 |
 | `:lottie` | Lottie | 按 `资源 id + 日夜模式` 共享 Composition，按需播放与回收释放 |
 | `:zxing` | ZXing core | 二维码生成，支持中心图标与纠错等级配置 |
 | `:kv` | MMKV / DataStore / kotlinx.serialization | 泛型中缀键值读写，按运行时类型选择存储方式 |
@@ -122,6 +125,7 @@ dependencies {
     implementation("com.github.git-a-live.openlibsextensions:kv:v0.1.2")      // 键值存储
     implementation("com.github.git-a-live.openlibsextensions:kv-gson:v0.1.2") // 可选：支持普通类
     implementation("com.github.git-a-live.openlibsextensions:gson:v0.1.2")    // 脏 JSON 修复
+    implementation("com.github.git-a-live.openlibsextensions:moshi:v0.1.2")   // Moshi 序列化与取值
 }
 ```
 
@@ -265,6 +269,54 @@ val tags = json.arrayOrNull("tags")  // 类型不符返回 null，不抛 ClassCa
 
 - 修复目标是「能被标准解析器接受」，不做语义推断：`{"a":,"b":1}` 这类缺少值的结构不补丁，直接返回 `null`。
 - 合法转义保持原样，因此 Windows 路径中的 `\n`、`\t` 仍会被解析为换行与制表符。此类内容应在协议层面转义。
+
+## moshi：序列化与安全取值
+
+Moshi 不对任意对象做反射建模，每个类型都需要 `JsonAdapter`（代码生成或手动注册）。本模块在此前提下提供序列化入口与无类型映射的安全取值。
+
+```kotlin
+@JsonClass(generateAdapter = true)
+data class User(val name: String, val age: Int)
+
+User("n", 1).toJsonOrNull()
+"""{"name":"n","age":1}""".toObjectOrNull<User>()
+```
+
+### API
+
+| 调用 | 说明 |
+|---|---|
+| `T.toJsonOrNull()` / `T.toJsonOrEmpty()` | 按调用点类型序列化，失败返回 `null` / 空串 |
+| `T.toJsonOrNull(moshi, type)` | 显式指定 `Moshi` 实例与类型 |
+| `String?.toObjectOrNull<T>()` | 反序列化，失败返回 `null` |
+| `String?.toObjectOrNull(clazz)` | 非泛型类型的反序列化 |
+| `String?.toListOrNull<T>()` | 反序列化为 `List<T>` |
+| `String?.toMapOrNull()` | 反序列化为 `Map<String, Any?>` |
+| `Map<String, Any?>.stringOr / intOr / longOr / doubleOr / floatOr / booleanOr` | 安全取值，类型不符时回退默认值 |
+| `Map<String, Any?>.mapOrNull / listOrNull` | 结构取值 |
+| `MoshiKit.useMoshi(moshi)` | 替换全局实例 |
+
+### 无类型映射的取值
+
+Moshi 默认将所有数字解析为 `Double`，因此 `intOr` 等取值同时兼容 `Double`、`Long`、`Int` 与数字字符串，不依赖单一类型判断：
+
+```kotlin
+val map = json.toMapOrNull() ?: return
+map.intOr("count")       // JSON 中的 3 会解析为 3.0，此处取出 3
+map.stringOr("name")     // 缺失或类型不符时返回 ""
+map.booleanOr("flag")    // 兼容 "true" / "TRUE" 字符串
+```
+
+### 与 `:gson` 的差异
+
+| 维度 | `:gson` | `:moshi` |
+|---|---|---|
+| 任意对象序列化 | 反射支持，无需注册 | 需要 `JsonAdapter`（codegen 或注册） |
+| 树模型 | `JsonObject` 强类型 | `Map<String, Any?>` 无类型 |
+| 数字解析 | 按整数与浮点区分 | 默认统一为 `Double` |
+| 脏 JSON 修复 | 提供 | 不提供，可配合 `:gson` 的 `JsonRepair` |
+
+未使用代码生成时，可通过 `MoshiKit.useMoshi(...)` 注入添加了 `KotlinJsonAdapterFactory` 的实例。该工厂依赖 kotlin-reflect，本模块不引入。
 
 ## lottie：列表共享缓存
 

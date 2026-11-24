@@ -22,13 +22,13 @@ libwrap.version=0.1.2
 
 未传 `publishRepoUrl` 时不添加任何远端仓库，`publishToMavenLocal` 仅写入本机 `~/.m2`。
 
-模块的 `artifactId` 取目录名（`coil` / `gson` / `lottie` / `zxing` / `kv` / `kv-gson`），不单独配置。
+模块的 `artifactId` 取目录名（`coil` / `gson` / `moshi` / `lottie` / `zxing` / `kv` / `kv-gson`），不单独配置。
 
 ## 2. 发布前自检
 
 ```bash
-./gradlew test                      # 82 个用例需全部通过
-./gradlew publishToMavenLocal       # 六个模块各产出 aar/jar + sources + pom
+./gradlew test                      # 93 个用例需全部通过
+./gradlew publishToMavenLocal       # 七个模块各产出 aar/jar + sources + pom
 ```
 
 产物形态检查：

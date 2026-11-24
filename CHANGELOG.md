@@ -2,6 +2,14 @@
 
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。Kotlin 库存在一项二进制兼容约束：为公开类型新增带默认值的构造器参数，对 Kotlin 调用方构成二进制破坏，此类改动升 minor。
 
+## 未发布
+
+### 新增
+
+- `:moshi` 序列化模块，与 `:gson` 同形但按 Moshi 的模型建模：序列化入口基于 `JsonAdapter`，
+  树模型为无类型 `Map<String, Any?>`，取值方法兼容 Moshi 将数字统一解析为 `Double` 的行为。
+  不引入 kotlin-reflect，需要反射支持时由调用方注入 `KotlinJsonAdapterFactory`。
+
 ## 0.1.2
 
 ### 新增

@@ -15,7 +15,7 @@ class JsonRepairActivity : Activity() {
 
     private val samples = listOf(
         """{"code":200,"path":"C:\Users\demo\name"}""",
-        """{"title":"他说"你好"就走了","id":7}""",
+        """{"title":"他称"收到"后离开","id":7}""",
         """{"list":[1,2,{"k":"v"}""",
         """{"a":1,"b":""",
         """{"desc":"a\zb"c","list":[1,2""",

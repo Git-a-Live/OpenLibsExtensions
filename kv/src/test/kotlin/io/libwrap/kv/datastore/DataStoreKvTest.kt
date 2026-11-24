@@ -18,7 +18,7 @@ import org.junit.Test
  *
  * 用内存实现的 [DataStore] 而不是真实文件：真正需要验证的是"按运行时类型构造对应的
  * `Preferences.Key`、按请求类型取回"这一层，文件读写属于 DataStore 自己的职责。
- * 顺带绕开了 Android 变体的原子文件操作在 JVM 单测里不可用的问题。
+ * 同时规避 Android 变体的原子文件操作在 JVM 单测中不可用的问题。
  */
 class DataStoreKvTest {
 
